@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechFlow Inc. - Task Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="login-page" id="loginPage">
+        <div class="logo-container">
+            <img src="https://via.placeholder.com/150" alt="TechFlow Inc." class="logo">
+            <h1>Welcome to TechFlow Task Manager</h1>
+        </div>
+        <div class="login-container">
+            <h2>Login</h2>
+            <input type="text" id="username" placeholder="Enter Username" required>
+            <input type="password" id="password" placeholder="Enter Password" required>
+            <button onclick="login()">Login</button>
+            <div id="errorMessage" class="error-message"></div>
+        </div>
+    </div>
+
+    <div class="dashboard-page" id="adminDashboard">
+        <h2>Admin Dashboard</h2>
+        <button onclick="logout()">Logout</button>
+        <div class="task-section">
+            <h3>Manage Tasks</h3>
+            <input type="text" id="newTask" placeholder="New Task">
+            <button onclick="addTask()">Add Task</button>
+            <ul id="taskList"></ul>
+        </div>
+    </div>
+
+    <div class="dashboard-page" id="employeeDashboard">
+        <h2>Employee Dashboard</h2>
+        <button onclick="logout()">Logout</button>
+        <div class="task-section">
+            <h3>Your Tasks</h3>
+            <ul id="employeeTaskList"></ul>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
