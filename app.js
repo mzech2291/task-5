@@ -1,68 +1,72 @@
-// Simulating Local Database with User Information
+// Mock users and tasks
 const users = [
-    { username: "admin", password: "admin123", role: "admin" },
-    { username: "employee", password: "employee123", role: "employee" }
+    { email: 'admin@techwave.com', password: 'admin123', role: 'admin' },
+    { email: 'employee@techwave.com', password: 'employee123', role: 'employee' }
 ];
 
-// Display login page by default
-document.getElementById('loginPage').style.display = 'block';
+const tasks = [
+    { id: 1, title: 'Complete project report', status: 'pending', assignedTo: 'employee@techwave.com' },
+    { id: 2, title: 'Attend team meeting', status: 'completed', assignedTo: 'employee@techwave.com' }
+];
 
-// Function to handle login
+// Handle login
 function login() {
-    const username = document.getElementById('username').value;
+    const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-    const user = users.find(u => u.username === username && u.password === password);
+    const user = users.find(user => user.email === email && user.password === password);
 
     if (user) {
-        document.getElementById('loginPage').style.display = 'none';
-        if (user.role === 'admin') {
-            document.getElementById('adminDashboard').style.display = 'block';
-        } else {
-            document.getElementById('employeeDashboard').style.display = 'block';
-            loadEmployeeTasks();
-        }
+        localStorage.setItem('loggedIn', true);
+        localStorage.setItem('role', user.role);
+        showDashboard(user.role);
     } else {
-        document.getElementById('errorMessage').innerText = "Invalid credentials. Please try again.";
+        document.getElementById('login-error').innerText = 'Invalid email or password';
     }
 }
 
-// Function to logout
+// Show dashboard based on role
+function showDashboard(role) {
+    document.getElementById('login-container').style.display = 'none';
+    if (role === 'admin') {
+        document.getElementById('admin-dashboard').style.display = 'block';
+        loadUserManagement();
+    } else if (role === 'employee') {
+        document.getElementById('employee-dashboard').style.display = 'block';
+        loadTaskList();
+    }
+}
+
+// Load user management for admin
+function loadUserManagement() {
+    const userManagement = document.getElementById('user-management');
+    userManagement.innerHTML = '<p>Manage users here.</p>';
+    // Implement user management features here
+}
+
+// Load task list for employee
+function loadTaskList() {
+    const taskList = document.getElementById('task-list');
+    taskList.innerHTML = tasks.filter(task => task.assignedTo === 'employee@techwave.com')
+        .map(task => `<p>${task.title} - ${task.status}</p>`)
+        .join('');
+}
+
+// Handle logout
 function logout() {
-    document.getElementById('loginPage').style.display = 'block';
-    document.getElementById('adminDashboard').style.display = 'none';
-    document.getElementById('employeeDashboard').style.display = 'none';
+    localStorage.removeItem('loggedIn');
+    localStorage.removeItem('role');
+    document.getElementById('admin-dashboard').style.display = 'none';
+    document.getElementById('employee-dashboard').style.display = 'none';
+    document.getElementById('login-container').style.display = 'block';
 }
 
-// Task Management for Admin
-let tasks = [];
-
-function addTask() {
-    const task = document.getElementById('newTask').value;
-    if (task) {
-        tasks.push(task);
-        document.getElementById('newTask').value = '';
-        displayTasks();
-        saveTasks();
+// Check if user is logged in and show the appropriate dashboard
+document.addEventListener('DOMContentLoaded', () => {
+    const loggedIn = localStorage.getItem('loggedIn');
+    const role = localStorage.getItem('role');
+    if (loggedIn) {
+        showDashboard(role);
+    } else {
+        document.getElementById('login-container').style.display = 'block';
     }
-}
-
-function displayTasks() {
-    const taskList = document.getElementById('taskList');
-    taskList.innerHTML = '';
-    tasks.forEach((task, index) => {
-        taskList.innerHTML += <li>${task}</li>;
-    });
-}
-
-function saveTasks() {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-}
-
-function loadEmployeeTasks() {
-    tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    const employeeTaskList = document.getElementById('employeeTaskList');
-    employeeTaskList.innerHTML = '';
-    tasks.forEach(task => {
-        employeeTaskList.innerHTML += <li>${task}</li>;
-    });
-}
+});
